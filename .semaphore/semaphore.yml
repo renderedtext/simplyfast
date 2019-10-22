@@ -1,0 +1,29 @@
+version: v1.0
+name: First pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: on-master
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: make lint
+          commands:
+            - echo "lint your code"
+          parallelism: 10
+    skip:
+      when: branch != 'master'
+    dependencies: []
+  - name: all-other-branches
+    skip:
+      when: branch = 'master'
+    dependencies: []
+    task:
+      jobs:
+        - name: RSpec
+          commands: []
+          parallelism: 2
