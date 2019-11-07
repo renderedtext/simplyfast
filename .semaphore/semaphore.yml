@@ -1,29 +1,16 @@
 version: v1.0
-name: First pipeline
+name: Java
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
-  - name: on-master
+  - name: Ant
     task:
-      prologue:
-        commands:
-          - checkout
       jobs:
-        - name: RSpec
+        - name: Build & Test
           commands:
-            - echo "lint your code"
-          parallelism: 10
-    skip:
-      when: branch != 'master'
-    dependencies: []
-  - name: all-other-branches
-    skip:
-      when: branch = 'master'
-    dependencies: []
-    task:
-      jobs:
-        - name: RSpec
-          commands: []
-          parallelism: 2
+            - checkout
+            - sem-version java 1.8
+            - ant -noinput -buildfile build.xml
+            - ant test
